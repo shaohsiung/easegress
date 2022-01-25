@@ -85,11 +85,13 @@ func main() {
 		}
 	}
 
+	// 开启一个 writer 向linux /proc 写入系统的资源消耗信息
 	profile, err := profile.New(opt)
 	if err != nil {
 		logger.Errorf("new profile failed: %v", err)
 		os.Exit(1)
 	}
+
 	// 创建并启动 etcd 集群
 	cls, err := cluster.New(opt)
 	if err != nil {
@@ -101,10 +103,12 @@ func main() {
 
 	apiServer := api.MustNewServer(opt, cls, super)
 
+	// 系统启动后, 关闭父进程, 让当前进程被 systemd(pid=1) 托管
 	if graceupdate.CallOriProcessTerm(super.FirstHandleDone()) {
 		pidfile.Write(opt)
 	}
 
+	// 注册信号处理器 usr2
 	closeCls := func() {
 		wg := &sync.WaitGroup{}
 		wg.Add(2)
@@ -121,6 +125,7 @@ func main() {
 		os.Exit(1)
 	}
 
+	// 捕获 2, 15 信号
 	sigChan := make(chan common.Signal, 1)
 	if err := common.NotifySignal(sigChan, common.SignalInt, common.SignalTerm); err != nil {
 		log.Printf("failed to register signal: %v", err)
@@ -134,6 +139,7 @@ func main() {
 	}()
 	logger.Infof("%s signal received, closing easegress", sig)
 
+	// 闭锁 实现异步转同步 可以等待一组goroutine返回
 	wg := &sync.WaitGroup{}
 	wg.Add(4)
 	apiServer.Close(wg)
