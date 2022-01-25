@@ -80,7 +80,8 @@ func loadInitialObjects(s *Supervisor, paths []string) map[string]string {
 func MustNew(opt *option.Options, cls cluster.Cluster) *Supervisor {
 	s := &Supervisor{
 		options: opt,
-		cls:     cls,
+		// etcd 集群
+		cls: cls,
 
 		firstHandle:     true,
 		firstHandleDone: make(chan struct{}),

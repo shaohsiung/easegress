@@ -62,7 +62,9 @@ type (
 		Object
 
 		// Init initializes the Object.
-		Init(superSpec *Spec, muxMapper protocol.MuxMapper)
+		Init(superSpec *Spec,
+			// muxMapper 路由表
+			muxMapper protocol.MuxMapper)
 
 		// Inherit also initializes the Object.
 		// But it needs to handle the lifecycle of the previous generation.

@@ -106,7 +106,9 @@ type Options struct {
 // addClusterVars introduces cluster arguments.
 func addClusterVars(opt *Options) {
 	opt.flags.StringVar(&opt.ClusterName, "cluster-name", "eg-cluster-default-name", "Human-readable name for the new cluster, ignored while joining an existed cluster.")
+	// 默认启动一个etcd写节点
 	opt.flags.StringVar(&opt.ClusterRole, "cluster-role", "primary", "Cluster role for this member (primary, secondary).")
+	// etcd 集群的请求超时时间10秒
 	opt.flags.StringVar(&opt.ClusterRequestTimeout, "cluster-request-timeout", "10s", "Timeout to handle request in the cluster.")
 
 	// Cluster connection configuration style 1
@@ -332,14 +334,14 @@ func (opt *Options) validate() error {
 		}
 	}
 	switch opt.ClusterRole {
-	case "secondary":
+	case "secondary": // reader
 		if opt.ForceNewCluster {
 			return fmt.Errorf("secondary got force-new-cluster")
 		}
 		if len(opt.Cluster.PrimaryListenPeerURLs) == 0 && len(opt.ClusterJoinURLs) == 0 {
 			return fmt.Errorf("secondary got empty cluster.primary-listen-peer-urls and cluster-join-urls entries")
 		}
-	case "primary":
+	case "primary": // writer
 		if err := checkNoOverlappingArguments(opt); err != nil {
 			return err
 		}
@@ -476,6 +478,8 @@ func (opt *Options) GetPeerURLs() []string {
 		}
 		return opt.Cluster.PrimaryListenPeerURLs
 	}
+
+	// 返回一个拷贝对象 防止 InitialCluster 逸出
 	peerURLs := make([]string, 0)
 	for _, peerURL := range opt.Cluster.InitialCluster {
 		peerURLs = append(peerURLs, peerURL)

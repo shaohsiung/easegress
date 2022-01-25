@@ -248,15 +248,14 @@ func (c *cluster) getReady() error {
 	}
 
 	if !c.opt.UseInitialCluster() && !c.opt.ForceNewCluster && c.members != nil && c.members.knownMembersLen() > 1 {
-		client, _ := c.getClient()
-		if client != nil {
-			err := c.addSelfToCluster()
-			if err != nil {
+		if client, _ := c.getClient(); client != nil {
+			if err := c.addSelfToCluster(); err != nil {
 				logger.Errorf("add self to cluster failed: %v", err)
 			}
 		}
 	}
 
+	// 启动 etcd Server
 	done, timeout, err := c.startServer()
 	if err != nil {
 		return fmt.Errorf("start server failed: %v", err)
@@ -398,6 +397,7 @@ func (c *cluster) getClient() (*clientv3.Client, error) {
 		}
 	}
 	logger.Infof("client connect with endpoints: %v", endpoints)
+	// 创建 etcd Client
 	client, err := clientv3.New(clientv3.Config{
 		Endpoints:            endpoints,
 		AutoSyncInterval:     autoSyncInterval,

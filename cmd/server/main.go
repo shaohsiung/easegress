@@ -90,6 +90,7 @@ func main() {
 		logger.Errorf("new profile failed: %v", err)
 		os.Exit(1)
 	}
+	// 创建并启动 etcd 集群
 	cls, err := cluster.New(opt)
 	if err != nil {
 		logger.Errorf("new cluster failed: %v", err)
