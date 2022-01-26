@@ -70,8 +70,8 @@ func Register(f Filter) {
 		panic(fmt.Errorf("%T: empty kind", f))
 	}
 
-	existedFilter, existed := filterRegistry[f.Kind()]
-	if existed {
+	// 检查 filter 是否已经注册。同类型的 filter 只允许注册一次
+	if existedFilter, existed := filterRegistry[f.Kind()]; existed {
 		panic(fmt.Errorf("%T and %T got same kind: %s", f, existedFilter, f.Kind()))
 	}
 

@@ -349,6 +349,7 @@ func (b *Proxy) handle(ctx context.HTTPContext) (result string) {
 	}
 
 	result = p.handle(ctx, ctx.Request().Body(), b.client)
+	fmt.Printf("result: %+v", result)
 	if result != "" {
 		return result
 	}

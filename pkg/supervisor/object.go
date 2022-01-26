@@ -170,11 +170,14 @@ func (or *ObjectRegistry) run() {
 			return
 		case kv := <-or.configSyncChan:
 			config := make(map[string]string)
+			fmt.Println("收到 objects 变化通知啦~")
+			fmt.Printf("%+v", kv)
 			for k, v := range kv {
 				k = strings.TrimPrefix(k, or.configPrefix)
 				config[k] = v
 			}
 			or.applyConfig(config)
+			// 缓存上一次启动时创建的 objects
 			or.storeConfigInLocal(config)
 		}
 	}

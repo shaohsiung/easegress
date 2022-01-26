@@ -192,7 +192,7 @@ After launching successfully, we could check the status of the one-node cluster.
 
 ### Create an HTTPServer and Pipeline
 
-Now let's create an HTTPServer listening on port 10080 to handle the HTTP traffic.
+Now let's create an HTTPServer listening on port 10080 to <u>**handle the HTTP traffic.**</u>
 
 ```bash
 $ echo '

@@ -195,6 +195,8 @@ func (p *pool) handle(ctx context.HTTPContext, reqBody io.Reader, client *http.C
 		}
 
 		setStatusCode(http.StatusServiceUnavailable)
+
+		// 部分负载均衡节点失效
 		return resultServerError
 	}
 

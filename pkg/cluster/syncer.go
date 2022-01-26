@@ -217,6 +217,7 @@ func (s *Syncer) SyncPrefix(prefix string) (<-chan map[string]string, error) {
 		for k, v := range data {
 			m[k] = string(v.Value)
 		}
+		// here
 		ch <- m
 	}
 
