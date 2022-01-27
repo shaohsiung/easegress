@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 
+// https://github.com/megaease/easegress/blob/main/doc/reference/controllers.md#rawconfigtrafficcontroller
+
 package rawconfigtrafficcontroller
 
 import (

@@ -32,12 +32,18 @@ import (
 type (
 	// Server is the api server.
 	Server struct {
-		opt     *option.Options
-		server  http.Server
-		router  *dynamicMux
+		// 配置
+		opt *option.Options
+		// http服务
+		server http.Server
+		// 路由表
+		router *dynamicMux
+		// etcd集群 用来持久化所有object的配置文件
 		cluster cluster.Cluster
-		super   *supervisor.Supervisor
+		// supervisor 维护着正在运行的所有object资源
+		super *supervisor.Supervisor
 
+		// 基于etcd实现的分布式锁
 		mutex      cluster.Mutex
 		mutexMutex sync.Mutex
 	}
@@ -63,8 +69,11 @@ func MustNewServer(opt *option.Options, cluster cluster.Cluster, super *supervis
 		cluster: cluster,
 		super:   super,
 	}
+	// 动态路由表
 	s.router = newDynamicMux(s)
-	s.server = http.Server{Addr: opt.APIAddr, Handler: s.router}
+	s.server = http.Server{Addr: opt.APIAddr,
+		// 实现了接口 func (m *dynamicMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+		Handler: s.router}
 
 	_, err := s.getMutex()
 	if err != nil {
@@ -76,6 +85,7 @@ func MustNewServer(opt *option.Options, cluster cluster.Cluster, super *supervis
 
 	go func() {
 		logger.Infof("api server running in %s", opt.APIAddr)
+		// 启动 API 服务
 		s.server.ListenAndServe()
 	}()
 
@@ -86,6 +96,7 @@ func MustNewServer(opt *option.Options, cluster cluster.Cluster, super *supervis
 func (s *Server) Close(wg *sync.WaitGroup) {
 	defer wg.Done()
 
+	// 设置关闭的超时时间
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 

@@ -218,6 +218,7 @@ func (aa *APIAggregator) handle(ctx context.HTTPContext) (result string) {
 		}(i, p.Name, req)
 	}
 
+	// 同步转异步
 	wg.Wait()
 
 	for _, resp := range httpResps {

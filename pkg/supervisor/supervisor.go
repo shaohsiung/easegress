@@ -36,11 +36,13 @@ type (
 		options *option.Options
 		cls     cluster.Cluster
 
+		// biz tls
 		// The scenario here satisfies the first common case:
 		// When the entry for a given key is only ever written once but read many times.
 		// Reference: https://golang.org/pkg/sync/#Map
 		businessControllers sync.Map
-		systemControllers   sync.Map
+		// sys ctls
+		systemControllers sync.Map
 
 		objectRegistry  *ObjectRegistry
 		watcher         *ObjectEntityWatcher

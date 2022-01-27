@@ -49,7 +49,11 @@ type (
 	HeaderToJSON struct {
 		filterSpec *httppipeline.FilterSpec
 		spec       *Spec
-		headerMap  map[string]string
+
+		// headerMap
+		// k: The HTTP header that contains JSON value
+		// v: The field name to put JSON value into HTTP body
+		headerMap map[string]string
 	}
 )
 
@@ -189,6 +193,7 @@ func (h *HeaderToJSON) handle(ctx context.HTTPContext) string {
 		return resultBodyReadErr
 	}
 
+	// 合并 HTTP headers 和 Body
 	var body interface{}
 	if len(reqBody) == 0 {
 		body = headerMap

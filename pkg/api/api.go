@@ -71,6 +71,8 @@ func RegisterAPIs(apiGroup *Group) {
 	apis[apiGroup.Group] = apiGroup
 
 	logger.Infof("register api group %s", apiGroup.Group)
+
+	// 开始注册路由表动作
 	apisChangeChan <- struct{}{}
 }
 

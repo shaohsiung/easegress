@@ -92,15 +92,17 @@ func main() {
 		os.Exit(1)
 	}
 
-	// 创建并启动 etcd 集群
+	// 1 启动 etcd 集群
 	cls, err := cluster.New(opt)
 	if err != nil {
 		logger.Errorf("new cluster failed: %v", err)
 		os.Exit(1)
 	}
 
+	// 2 启动sv
 	super := supervisor.MustNew(opt, cls)
 
+	// 3 启动apiserver
 	apiServer := api.MustNewServer(opt, cls, super)
 
 	// 系统启动后, 关闭父进程, 让当前进程被 systemd(pid=1) 托管

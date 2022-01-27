@@ -56,8 +56,10 @@ func (m *dynamicMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 func (m *dynamicMux) run() {
 	for {
 		select {
+		// api服务关闭之后，退出当前goroutine
 		case <-m.done:
 			return
+		// TODO 订阅api变更事件
 		case <-apisChangeChan:
 			m.reloadAPIs()
 		}
@@ -76,6 +78,7 @@ func (m *dynamicMux) reloadAPIs() {
 	sort.Sort(apisByOrder(apiGroups))
 
 	router := chi.NewMux()
+	// 注册中间件
 	router.Use(middleware.StripSlashes)
 	router.Use(m.newAPILogger)
 	router.Use(m.newConfigVersionAttacher)
