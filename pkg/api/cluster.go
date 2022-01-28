@@ -65,7 +65,6 @@ func (s *Server) _plusOneVersion() int64 {
 	if err != nil {
 		ClusterPanic(err)
 	}
-
 	return version
 }
 
